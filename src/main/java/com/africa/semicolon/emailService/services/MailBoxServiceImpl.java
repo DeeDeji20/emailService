@@ -6,11 +6,12 @@ import com.africa.semicolon.emailService.model.MailBoxType;
 import com.africa.semicolon.emailService.model.MailBoxes;
 import com.africa.semicolon.emailService.model.Message;
 import com.africa.semicolon.emailService.repository.MailBoxesRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@Slf4j
 @Service
 public class MailBoxServiceImpl implements MailBoxesService {
     @Autowired
@@ -33,6 +34,7 @@ public class MailBoxServiceImpl implements MailBoxesService {
         inbox.setType(MailBoxType.INBOX);
 
         CreateMessageDTO createMessageDTO =new CreateMessageDTO("mailSender", email,"Welcome to mail service");
+        log.info("---> senders email {}",email);
         Message creationMsg = messageService.sendMessage(createMessageDTO);
         inbox.setMessages(List.of(creationMsg));
         mailBoxes.getMailboxes().add(inbox);

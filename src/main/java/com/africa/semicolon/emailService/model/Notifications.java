@@ -14,4 +14,5 @@ public class Notifications {
     private String senderEmail;
     private String title;
     private String message;
+    private boolean isRead;
 }

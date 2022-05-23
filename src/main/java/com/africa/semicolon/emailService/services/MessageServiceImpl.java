@@ -7,10 +7,12 @@ import com.africa.semicolon.emailService.model.Notifications;
 import com.africa.semicolon.emailService.model.User;
 import com.africa.semicolon.emailService.repository.MessageRepository;
 import com.africa.semicolon.emailService.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class MessageServiceImpl implements MessageService{
     @Autowired
     MessageRepository messageRepository;
@@ -26,6 +28,8 @@ public class MessageServiceImpl implements MessageService{
                 .localDateTime(createMessageDTO.getLocalDateTime())
                 .msgBody(createMessageDTO.getMsgBody())
                 .build();
+        messageRepository.save(message);
+        log.info("------> senders email from msg service{}",createMessageDTO.getReceiver());
         User recipient = userRepository.findByEmail(createMessageDTO.getReceiver()).orElseThrow(()-> new UserNotFoundException("Receiver not found"));
         Notifications notifications = Notifications.builder()
                 .id(message.getMsgId())
@@ -36,7 +40,7 @@ public class MessageServiceImpl implements MessageService{
         recipient.getNotificationList().add(notifications);
         userRepository.save(recipient);
 
-        return messageRepository.save(message);
+        return message;
     }
 
 //    @Override
