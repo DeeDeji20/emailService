@@ -12,6 +12,7 @@ import java.util.List;
 @Setter
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @Validated
 @Builder
 @Document("User")
@@ -20,10 +21,11 @@ public class User {
     private String email;
     @NotNull
     private String password;
+    private List<Notifications> notificationList;
 
-
-    public User( String email, String password) {
-        this.email = email;
-        this.password = password;
-    }
+//    public User( String email, String password) {
+//        this.email = email;
+//        this.password = password;
+//        notificationList =new ArrayList<>();
+//    }
 }
