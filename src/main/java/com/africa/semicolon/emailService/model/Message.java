@@ -15,6 +15,10 @@ public class Message {
     private String msgId;
     private String sender;
     private String receiver;
-    private LocalDateTime localDateTime;
+    private LocalDateTime localDateTime ;
     private String msgBody;
+
+//    public Message() {
+//        localDateTime = LocalDateTime.now();
+//    }
 }

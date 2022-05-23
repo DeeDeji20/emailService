@@ -16,7 +16,7 @@ public class MessageServiceImpl implements MessageService{
         Message message = Message.builder()
                 .sender(createMessageDTO.getSender())
                 .receiver(createMessageDTO.getReceiver())
-//                .localDateTime(createMessageDTO.getLocalDateTime())
+                .localDateTime(createMessageDTO.getLocalDateTime())
                 .msgBody(createMessageDTO.getMsgBody())
                 .build();
         return messageRepository.save(message);

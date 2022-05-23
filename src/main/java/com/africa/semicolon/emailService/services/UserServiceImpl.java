@@ -53,17 +53,17 @@ public class UserServiceImpl implements UserService {
         MailBoxes receiverMailBox = mailBoxesRepository.findById(createMessageDTO.getReceiver()).orElseThrow(()-> {throw new UserNotFoundException("User not found");});
         MailBoxes senderMailBox = mailBoxesRepository.findById(createMessageDTO.getSender()).orElseThrow(()-> {throw new UserNotFoundException("User not found");});
 
-        Message message= messageService.sendMessage(createMessageDTO);
-        MailBox receiver = new MailBox();
-        receiver.setMessage(message);
-        receiver.setType(MailBoxType.INBOX);
+//        Message message= messageService.sendMessage(createMessageDTO);
+//        MailBox receiver = new MailBox();
+//        receiver.setMessages(message);
+//        receiver.setType(MailBoxType.INBOX);
+//
+//        MailBox sender = new MailBox();
+//        sender.setMessages(message);
+//        sender.setType(MailBoxType.SENT);
 
-        MailBox sender = new MailBox();
-        sender.setMessage(message);
-        sender.setType(MailBoxType.SENT);
-
-        receiverMailBox.getMailboxes().add(receiver);
-        senderMailBox.getMailboxes().add(sender);
+//        receiverMailBox.getMailboxes().add(receiver);
+//        senderMailBox.getMailboxes().add(sender);
 
         return "Message sent";
     }

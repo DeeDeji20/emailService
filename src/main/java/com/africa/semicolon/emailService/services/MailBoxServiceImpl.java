@@ -37,6 +37,10 @@ public class MailBoxServiceImpl implements MailBoxesService {
         inbox.setMessages(List.of(creationMsg));
         mailBoxes.getMailboxes().add(inbox);
 
+        MailBox outbox = new MailBox();
+        outbox.setType(MailBoxType.SENT);
+        mailBoxes.getMailboxes().add(outbox);
+
         mailBoxesRepository.save(mailBoxes);
         return mailBoxes;
     }

@@ -13,12 +13,13 @@ public class
 CreateMessageDTO {
     private String sender;
     private String receiver;
-    private LocalDateTime localDateTime = LocalDateTime.now();
+    private LocalDateTime localDateTime ;
     private String msgBody;
 
     public CreateMessageDTO(String sender, String receiver, String msgBody) {
         this.sender = sender;
         this.receiver = receiver;
         this.msgBody = msgBody;
+        localDateTime = LocalDateTime.now();
     }
 }
