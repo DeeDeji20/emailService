@@ -45,6 +45,7 @@ public class UserServiceImpl implements UserService {
         mailBoxService.createMailBoxes(email);
 
         userRepository.save(user);
+
         return mapper.map(user, UserDto.class);
     }
 
