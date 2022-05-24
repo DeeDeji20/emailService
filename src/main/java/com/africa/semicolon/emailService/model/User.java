@@ -21,7 +21,7 @@ public class User {
     private String email;
     @NotNull
     private String password;
-    private List<Notifications> notificationList;
+    private List<Notifications> notificationList = new ArrayList<>();
 
 //    public User( String email, String password) {
 //        this.email = email;

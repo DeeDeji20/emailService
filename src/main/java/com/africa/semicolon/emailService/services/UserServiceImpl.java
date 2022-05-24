@@ -29,6 +29,10 @@ public class UserServiceImpl implements UserService {
     MailBoxesRepository mailBoxesRepository;
 
     @Autowired
+    NotificationServiceImpl notificationService;
+
+
+    @Autowired
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
         this.mapper =new ModelMapper();
@@ -44,7 +48,14 @@ public class UserServiceImpl implements UserService {
                 .build();
         mailBoxService.createMailBoxes(email);
 
+            Notifications notifications = Notifications.builder()
+
+            .title("New message alert")
+
+            .build();
         userRepository.save(user);
+        notificationService.addNotification(email, notifications);
+
 
         return mapper.map(user, UserDto.class);
     }
