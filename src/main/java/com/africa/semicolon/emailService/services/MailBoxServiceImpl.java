@@ -1,15 +1,14 @@
 package com.africa.semicolon.emailService.services;
 
 import com.africa.semicolon.emailService.dtos.CreateMessageDTO;
-import com.africa.semicolon.emailService.model.MailBox;
-import com.africa.semicolon.emailService.model.MailBoxType;
-import com.africa.semicolon.emailService.model.MailBoxes;
-import com.africa.semicolon.emailService.model.Message;
+import com.africa.semicolon.emailService.exception.UserNotFoundException;
+import com.africa.semicolon.emailService.model.*;
 import com.africa.semicolon.emailService.repository.MailBoxesRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 @Slf4j
 @Service
@@ -50,5 +49,19 @@ public class MailBoxServiceImpl implements MailBoxesService {
     @Override
     public void addMessageToMailBox(CreateMessageDTO createMessageDTO) {
         messageService.sendMessage(createMessageDTO);
+    }
+
+    @Override
+    public List<MailBox> viewAllInboxes(String email) {
+        MailBoxes mailBoxes = mailBoxesRepository.findById(email).orElseThrow(()-> {throw new UserNotFoundException(("Not found"));});
+        List<MailBox> allMailBox =mailBoxes.getMailboxes();
+        return allMailBox.stream().filter(eachMailBox -> eachMailBox.getType().equals(MailBoxType.INBOX)).toList();
+    }
+
+    @Override
+    public List<MailBox> viewallSent(String email) {
+        MailBoxes mailBoxes = mailBoxesRepository.findById(email).orElseThrow(()-> {throw new UserNotFoundException(("Not found"));});
+        List<MailBox> allMailBox =mailBoxes.getMailboxes();
+        return allMailBox.stream().filter(eachMailBox -> eachMailBox.getType().equals(MailBoxType.SENT)).toList();
     }
 }
