@@ -22,10 +22,5 @@ public class User {
     @NotNull
     private String password;
     private List<Notifications> notificationList = new ArrayList<>();
-
-//    public User( String email, String password) {
-//        this.email = email;
-//        this.password = password;
-//        notificationList =new ArrayList<>();
-//    }
+    private boolean isLoggedIn;
 }

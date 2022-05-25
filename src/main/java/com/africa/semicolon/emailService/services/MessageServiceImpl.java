@@ -20,6 +20,9 @@ public class MessageServiceImpl implements MessageService{
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    NotificationServiceImpl notificationService;
+
 
     @Override
     public Message sendMessage(CreateMessageDTO createMessageDTO) {
@@ -29,6 +32,14 @@ public class MessageServiceImpl implements MessageService{
                 .localDateTime(createMessageDTO.getLocalDateTime())
                 .msgBody(createMessageDTO.getMsgBody())
                 .build();
+
+        Notifications notifications = Notifications.builder()
+                .message(createMessageDTO.getMsgBody())
+                .title("New message alert")
+                .senderEmail(createMessageDTO.getSender())
+
+                .build();
+        notificationService.addNotification(createMessageDTO.getReceiver(), notifications);
         return messageRepository.save(message);
     }
 //

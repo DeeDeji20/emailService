@@ -46,4 +46,9 @@ public class MailBoxServiceImpl implements MailBoxesService {
         mailBoxesRepository.save(mailBoxes);
         return mailBoxes;
     }
+
+    @Override
+    public void addMessageToMailBox(CreateMessageDTO createMessageDTO) {
+        messageService.sendMessage(createMessageDTO);
+    }
 }
