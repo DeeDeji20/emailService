@@ -34,6 +34,30 @@ public class MessageServiceImpl implements MessageService{
                 .msgBody(createMessageDTO.getMsgBody())
                 .build();
 
+        addMessageToReceiversInbox(createMessageDTO, message);
+
+        if (!message.getSender().equals("mailSender")) {
+            addMessageToSendersOutbox(createMessageDTO, message);
+        }
+
+        addNotification(createMessageDTO);
+
+        return messageRepository.save(message);
+    }
+
+    private void addMessageToSendersOutbox(CreateMessageDTO createMessageDTO, Message message) {
+        MailBoxes senderMailBox = mailBoxesRepository.findById(createMessageDTO.getSender()).orElseThrow(() -> {
+            throw new UserNotFoundException("not found");
+        });
+        senderMailBox.getMailboxes().forEach((mailBox) -> {
+            if (mailBox.getType().equals(MailBoxType.SENT)){
+                mailBox.getMessages().add(message);
+                mailBoxesRepository.save(senderMailBox);
+            }
+        });
+    }
+
+    private void addMessageToReceiversInbox(CreateMessageDTO createMessageDTO, Message message) {
         MailBoxes receiverMailBoxes = mailBoxesRepository.findById(createMessageDTO.getReceiver()).orElseThrow(()-> {throw new UserNotFoundException("not found");});
         receiverMailBoxes.getMailboxes().forEach((mailBox)->{
             if (mailBox.getType().equals(MailBoxType.INBOX)){
@@ -41,22 +65,6 @@ public class MessageServiceImpl implements MessageService{
                 mailBoxesRepository.save(receiverMailBoxes);
             }
         });
-
-        if (!message.getSender().equals("mailSender")) {
-            MailBoxes senderMailBox = mailBoxesRepository.findById(createMessageDTO.getSender()).orElseThrow(() -> {
-                throw new UserNotFoundException("not found");
-            });
-            senderMailBox.getMailboxes().forEach((mailBox) -> {
-                if (mailBox.getType().equals(MailBoxType.SENT)){
-                    mailBox.getMessages().add(message);
-                    mailBoxesRepository.save(senderMailBox);
-                }
-            });
-        }
-
-        addNotification(createMessageDTO);
-
-        return messageRepository.save(message);
     }
 
     private void addNotification(CreateMessageDTO createMessageDTO) {
