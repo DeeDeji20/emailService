@@ -2,9 +2,8 @@ package com.africa.semicolon.emailService.services;
 
 import com.africa.semicolon.emailService.dtos.CreateMessageDTO;
 import com.africa.semicolon.emailService.exception.UserNotFoundException;
-import com.africa.semicolon.emailService.model.Message;
-import com.africa.semicolon.emailService.model.Notifications;
-import com.africa.semicolon.emailService.model.User;
+import com.africa.semicolon.emailService.model.*;
+import com.africa.semicolon.emailService.repository.MailBoxesRepository;
 import com.africa.semicolon.emailService.repository.MessageRepository;
 import com.africa.semicolon.emailService.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,9 @@ public class MessageServiceImpl implements MessageService{
     UserRepository userRepository;
 
     @Autowired
-    NotificationServiceImpl notificationService;
+    MailBoxesRepository mailBoxesRepository;
+
+
 
 
     @Override
@@ -33,14 +34,38 @@ public class MessageServiceImpl implements MessageService{
                 .msgBody(createMessageDTO.getMsgBody())
                 .build();
 
-        Notifications notifications = Notifications.builder()
-                .message(createMessageDTO.getMsgBody())
-                .title("New message alert")
-                .senderEmail(createMessageDTO.getSender())
+        MailBoxes receiverMailBoxes = mailBoxesRepository.findById(createMessageDTO.getReceiver()).orElseThrow(()-> {throw new UserNotFoundException("not found");});
+        receiverMailBoxes.getMailboxes().forEach((mailBox)->{
+            if (mailBox.getType().equals(MailBoxType.INBOX)){
+                mailBox.getMessages().add(message);
+                mailBoxesRepository.save(receiverMailBoxes);
+            }
+        });
 
-                .build();
-        notificationService.addNotification(createMessageDTO.getReceiver(), notifications);
+        if (!message.getSender().equals("mailSender")) {
+            MailBoxes senderMailBox = mailBoxesRepository.findById(createMessageDTO.getSender()).orElseThrow(() -> {
+                throw new UserNotFoundException("not found");
+            });
+            senderMailBox.getMailboxes().forEach((mailBox) -> {
+                if (mailBox.getType().equals(MailBoxType.SENT)){
+                    mailBox.getMessages().add(message);
+                    mailBoxesRepository.save(senderMailBox);
+                }
+            });
+        }
+
+        addNotification(createMessageDTO);
+
         return messageRepository.save(message);
+    }
+
+    private void addNotification(CreateMessageDTO createMessageDTO) {
+        Notifications notifications = new Notifications(createMessageDTO.getSender(), "Incoming message from "+ createMessageDTO.getSender(), createMessageDTO.getMsgBody());
+        User user = userRepository.findByEmail(createMessageDTO.getReceiver()).orElseThrow(()-> {
+            throw new UserNotFoundException("Not found");
+        });
+        user.getNotificationList().add(notifications);
+        userRepository.save(user);
     }
 //
 //            log.info("------> senders email from msg service{}",createMessageDTO.getReceiver());

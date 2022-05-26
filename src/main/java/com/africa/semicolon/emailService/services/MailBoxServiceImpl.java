@@ -33,34 +33,27 @@ public class MailBoxServiceImpl implements MailBoxesService {
         MailBoxes mailBoxes = new MailBoxes();
         mailBoxes.setEmail(email);
 
-
-        CreateMessageDTO createMessageDTO =new CreateMessageDTO("mailSender", email,"Welcome to mail service");
-        log.info("---> senders email {}",email);
-        Message creationMsg = messageService.sendMessage(createMessageDTO);
-
         MailBox inbox = new MailBox();
         inbox.setType(MailBoxType.INBOX);
-        inbox.setMessages(List.of(creationMsg));
         mailBoxes.getMailboxes().add(inbox);
 
         MailBox outbox = new MailBox();
         outbox.setType(MailBoxType.SENT);
         mailBoxes.getMailboxes().add(outbox);
 
-        addNotification(createMessageDTO);
-
         mailBoxesRepository.save(mailBoxes);
+        CreateMessageDTO createMessageDTO =new CreateMessageDTO("mailSender", email,"Welcome to mail service");
+        log.info("---> senders email {}",email);
+        Message creationMsg = messageService.sendMessage(createMessageDTO);
+        inbox.setMessages(List.of(creationMsg));
+
+
+
+
         return mailBoxes;
     }
 
-    private void addNotification(CreateMessageDTO createMessageDTO) {
-        Notifications notifications = new Notifications(createMessageDTO.getSender(), "Incomind message from "+ createMessageDTO.getSender(), createMessageDTO.getMsgBody());
-        User user = userRepository.findByEmail(createMessageDTO.getReceiver()).orElseThrow(()-> {
-            throw new UserNotFoundException("Not found");
-        });
-        user.getNotificationList().add(notifications);
-        userRepository.save(user);
-    }
+
 
     @Override
     public void addMessageToMailBox(CreateMessageDTO createMessageDTO) {
