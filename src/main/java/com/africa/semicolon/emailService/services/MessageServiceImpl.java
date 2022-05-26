@@ -26,7 +26,7 @@ public class MessageServiceImpl implements MessageService{
 
 
     @Override
-    public Message sendMessage(CreateMessageDTO createMessageDTO) {
+    public String sendMessage(CreateMessageDTO createMessageDTO) {
         Message message = Message.builder()
                 .sender(createMessageDTO.getSender())
                 .receiver(createMessageDTO.getReceiver())
@@ -42,7 +42,8 @@ public class MessageServiceImpl implements MessageService{
 
         addNotification(createMessageDTO);
 
-        return messageRepository.save(message);
+        messageRepository.save(message);
+        return "Message sent to " + createMessageDTO.getReceiver();
     }
 
     private void addMessageToSendersOutbox(CreateMessageDTO createMessageDTO, Message message) {

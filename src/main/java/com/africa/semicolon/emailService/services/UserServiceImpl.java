@@ -53,25 +53,13 @@ public class UserServiceImpl implements UserService {
         return mapper.map(user, UserDto.class);
     }
 
-    @Override
-    public String sendMesage(CreateMessageDTO createMessageDTO) {
-        MailBoxes receiverMailBox = mailBoxesRepository.findById(createMessageDTO.getReceiver()).orElseThrow(()-> {throw new UserNotFoundException("User not found");});
-        MailBoxes senderMailBox = mailBoxesRepository.findById(createMessageDTO.getSender()).orElseThrow(()-> {throw new UserNotFoundException("User not found");});
-
-        messageService.sendMessage(createMessageDTO);
-        MailBox receiver = new MailBox();
-        receiver.setType(MailBoxType.INBOX);
-//        receiver.setMessages(List.of(message));
-
-        MailBox sender = new MailBox();
-//        sender.setMessages(List.of(message));
-        sender.setType(MailBoxType.SENT);
-
-        if (receiver.getType() == MailBoxType.INBOX) receiverMailBox.getMailboxes().add(receiver);
-        if (sender.getType() == MailBoxType.SENT) senderMailBox.getMailboxes().add(sender);
-
-        return "Message sent";
-    }
+//    @Override
+//    public String sendMesage(CreateMessageDTO createMessageDTO) {
+//
+//        messageService.sendMessage(createMessageDTO);
+//
+//        return "Message sent";
+//    }
 
     @Override
     public String login(LoginRequest loginResquest) {

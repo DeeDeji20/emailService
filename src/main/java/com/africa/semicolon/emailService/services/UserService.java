@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserService {
     UserDto createAccount(String email, String password);
-    String sendMesage(CreateMessageDTO createMessageDTO);
+//    String sendMesage(CreateMessageDTO createMessageDTO);
     String login(LoginRequest loginResquest);
 //    void getNotifications(String email, Notifications notifications);
 }

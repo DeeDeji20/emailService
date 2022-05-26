@@ -4,5 +4,5 @@ import com.africa.semicolon.emailService.dtos.CreateMessageDTO;
 import com.africa.semicolon.emailService.model.Message;
 
 public interface MessageService {
-    Message sendMessage(CreateMessageDTO message);
+    String sendMessage(CreateMessageDTO message);
 }
