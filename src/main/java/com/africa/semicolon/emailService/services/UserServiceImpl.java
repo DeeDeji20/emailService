@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
                 .password(password)
                 .build();
         userRepository.save(user);
-//        mailBoxService.createMailBoxes(email);
+        mailBoxService.createMailBoxes(email);
 
         return mapper.map(user, UserDto.class);
     }
@@ -80,11 +80,12 @@ public class UserServiceImpl implements UserService {
         return "User with email " + loginResquest.getEmail() + " has been logged in";
     }
 
-    @Override
-    public void getNotifications(String email, Notifications notifications) {
-        User user = userRepository.findByEmail(email).orElseThrow(()-> {throw new UserNotFoundException(("Not found"));});
-        user.getNotificationList().add(notifications);
-        userRepository.save(user);
-    }
+//    @Override
+//    public void getNotifications(String email, Notifications notifications) {
+//        User user = userRepository.findByEmail(email)
+//                .orElseThrow(()-> {throw new UserNotFoundException(("Not found"));});
+//        user.getNotificationList().add(notifications);
+//        userRepository.save(user);
+//    }
 
 }

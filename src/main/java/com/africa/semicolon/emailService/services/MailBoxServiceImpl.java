@@ -4,6 +4,7 @@ import com.africa.semicolon.emailService.dtos.CreateMessageDTO;
 import com.africa.semicolon.emailService.exception.UserNotFoundException;
 import com.africa.semicolon.emailService.model.*;
 import com.africa.semicolon.emailService.repository.MailBoxesRepository;
+import com.africa.semicolon.emailService.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,9 @@ public class MailBoxServiceImpl implements MailBoxesService {
     @Autowired
     private MessageService messageService;
 
+    @Autowired
+    UserRepository userRepository;
+
     public MailBoxServiceImpl(MailBoxesRepository mailBoxesRepository) {
         this.mailBoxesRepository = mailBoxesRepository;
     }
@@ -29,12 +33,13 @@ public class MailBoxServiceImpl implements MailBoxesService {
         MailBoxes mailBoxes = new MailBoxes();
         mailBoxes.setEmail(email);
 
-        MailBox inbox = new MailBox();
-        inbox.setType(MailBoxType.INBOX);
 
         CreateMessageDTO createMessageDTO =new CreateMessageDTO("mailSender", email,"Welcome to mail service");
         log.info("---> senders email {}",email);
         Message creationMsg = messageService.sendMessage(createMessageDTO);
+
+        MailBox inbox = new MailBox();
+        inbox.setType(MailBoxType.INBOX);
         inbox.setMessages(List.of(creationMsg));
         mailBoxes.getMailboxes().add(inbox);
 
@@ -42,8 +47,19 @@ public class MailBoxServiceImpl implements MailBoxesService {
         outbox.setType(MailBoxType.SENT);
         mailBoxes.getMailboxes().add(outbox);
 
+        addNotification(createMessageDTO);
+
         mailBoxesRepository.save(mailBoxes);
         return mailBoxes;
+    }
+
+    private void addNotification(CreateMessageDTO createMessageDTO) {
+        Notifications notifications = new Notifications(createMessageDTO.getSender(), "Incomind message from "+ createMessageDTO.getSender(), createMessageDTO.getMsgBody());
+        User user = userRepository.findByEmail(createMessageDTO.getReceiver()).orElseThrow(()-> {
+            throw new UserNotFoundException("Not found");
+        });
+        user.getNotificationList().add(notifications);
+        userRepository.save(user);
     }
 
     @Override

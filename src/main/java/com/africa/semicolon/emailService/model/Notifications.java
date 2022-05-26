@@ -15,4 +15,10 @@ public class Notifications {
     private String title;
     private String message;
     private boolean isRead;
+
+    public Notifications(String senderEmail, String title, String message) {
+        this.senderEmail = senderEmail;
+        this.title = title;
+        this.message = message;
+    }
 }
