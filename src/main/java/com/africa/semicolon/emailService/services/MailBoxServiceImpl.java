@@ -48,8 +48,6 @@ public class MailBoxServiceImpl implements MailBoxesService {
         inbox.setMessages(List.of(creationMsg));
 
 
-
-
         return mailBoxes;
     }
 
