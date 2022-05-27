@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 @Slf4j
 @Service
@@ -43,20 +42,18 @@ public class MailBoxServiceImpl implements MailBoxesService {
 
         mailBoxesRepository.save(mailBoxes);
         CreateMessageDTO createMessageDTO =new CreateMessageDTO("mailSender", email,"Welcome to mail service");
-        log.info("---> senders email {}",email);
-        Message creationMsg = messageService.sendMessage(createMessageDTO);
-        inbox.setMessages(List.of(creationMsg));
-
+        log.info("---> receivers email {}",email);
+        messageService.sendMessage(createMessageDTO);
 
         return mailBoxes;
     }
 
 
-
-    @Override
-    public void addMessageToMailBox(CreateMessageDTO createMessageDTO) {
-        messageService.sendMessage(createMessageDTO);
-    }
+//
+//    @Override
+//    public void addMessageToMailBox(CreateMessageDTO createMessageDTO) {
+//        messageService.sendMessage(createMessageDTO);
+//    }
 
     @Override
     public List<MailBox> viewAllInboxes(String email) {

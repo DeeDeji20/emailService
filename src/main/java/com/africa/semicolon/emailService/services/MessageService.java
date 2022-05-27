@@ -5,4 +5,5 @@ import com.africa.semicolon.emailService.model.Message;
 
 public interface MessageService {
     String sendMessage(CreateMessageDTO message);
+    void readMessage(String messageId);
 }

@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface MailBoxesService {
     MailBoxes createMailBoxes(String email);
-    void addMessageToMailBox(CreateMessageDTO createMessageDTO);
+//    void addMessageToMailBox(CreateMessageDTO createMessageDTO);
     List<MailBox> viewAllInboxes(String email);
     List<MailBox> viewallSent(String email);
 

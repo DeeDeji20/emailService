@@ -20,17 +20,10 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    MessageService messageService;
-
     @PostMapping("/create")
     public ResponseEntity<?> createUser(@RequestParam @Valid @NotNull @NotBlank String email, @RequestParam @Valid @NotNull @NotBlank  String password){
         UserDto userDto = userService.createAccount(email, password);
         return new ResponseEntity<>(userDto, HttpStatus.CREATED);
     }
 
-    @PostMapping("/send")
-    public String sendMessage(@RequestBody CreateMessageDTO createMessageDTO){
-        return messageService.sendMessage(createMessageDTO);
-    }
 }

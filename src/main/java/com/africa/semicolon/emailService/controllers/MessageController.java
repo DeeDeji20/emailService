@@ -22,4 +22,9 @@ public class MessageController {
     public String sendMessage(@RequestBody CreateMessageDTO createMessageDTO){
         return messageService.sendMessage(createMessageDTO);
     }
+
+    @PatchMapping("/read/{messageId}")
+    public void readMessage(@PathVariable String messageId){
+        messageService.readMessage(messageId);
+    }
 }

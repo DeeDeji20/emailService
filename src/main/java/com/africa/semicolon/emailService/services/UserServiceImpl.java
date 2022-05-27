@@ -53,13 +53,6 @@ public class UserServiceImpl implements UserService {
         return mapper.map(user, UserDto.class);
     }
 
-//    @Override
-//    public String sendMesage(CreateMessageDTO createMessageDTO) {
-//
-//        messageService.sendMessage(createMessageDTO);
-//
-//        return "Message sent";
-//    }
 
     @Override
     public String login(LoginRequest loginResquest) {
@@ -68,12 +61,6 @@ public class UserServiceImpl implements UserService {
         return "User with email " + loginResquest.getEmail() + " has been logged in";
     }
 
-//    @Override
-//    public void getNotifications(String email, Notifications notifications) {
-//        User user = userRepository.findByEmail(email)
-//                .orElseThrow(()-> {throw new UserNotFoundException(("Not found"));});
-//        user.getNotificationList().add(notifications);
-//        userRepository.save(user);
-//    }
+
 
 }

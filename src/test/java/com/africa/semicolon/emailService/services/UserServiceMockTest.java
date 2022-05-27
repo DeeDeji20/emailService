@@ -34,7 +34,6 @@ public class UserServiceMockTest {
         this.userService = new UserServiceImpl(userRepository);
     }
 
-
     @Test
     void testThatAUserCanBeCreated(){
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());

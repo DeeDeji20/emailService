@@ -37,7 +37,7 @@ class MailBoxServiceImplTest {
     }
 
     @Test
-    void testThatMailBoxccanBeCreated(){
+    void testThatMailBoxcCanBeCreated(){
         MailBoxes mailBoxes = new MailBoxes();
         when(mailBoxesRepository.save(any(MailBoxes.class))).thenReturn(mailBoxes);
 

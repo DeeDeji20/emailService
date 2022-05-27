@@ -17,6 +17,7 @@ public class Message {
     private String receiver;
     private LocalDateTime localDateTime ;
     private String msgBody;
+    private boolean isRead;
 
 //    public Message() {
 //        localDateTime = LocalDateTime.now();
