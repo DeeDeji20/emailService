@@ -47,10 +47,9 @@ public class UserServiceImpl implements UserService {
                 .email(email)
                 .password(password)
                 .build();
-        userRepository.save(user);
+        User savedUser=userRepository.save(user);
         mailBoxService.createMailBoxes(email);
-
-        return mapper.map(user, UserDto.class);
+        return mapper.map(savedUser, UserDto.class);
     }
 
 

@@ -2,6 +2,7 @@ package com.africa.semicolon.emailService.model;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.validation.annotation.Validated;
 
@@ -21,6 +22,7 @@ public class User {
     private String email;
     @NotNull
     private String password;
+//    @DBRef
     private List<Notifications> notificationList = new ArrayList<>();
     private boolean isLoggedIn;
 }

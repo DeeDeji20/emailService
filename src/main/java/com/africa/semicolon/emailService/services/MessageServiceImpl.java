@@ -40,51 +40,69 @@ public class MessageServiceImpl implements MessageService{
                 .msgBody(createMessageDTO.getMsgBody())
                 .build();
 
+        messageRepository.save(message);
         addMessageToReceiversInbox(createMessageDTO, message);
 
         if (!message.getSender().equals("mailSender")) {
             addMessageToSendersOutbox(createMessageDTO, message);
         }
-
         addNotification(createMessageDTO);
-
-        messageRepository.save(message);
         return "Message sent to " + createMessageDTO.getReceiver();
     }
 
     @Override
     public void readMessage(String messageId) {
         Message message = messageRepository.findById(messageId).orElseThrow(()-> {throw new MessageNotAvailable("Message is unavailable");});
-        User user =  userRepository.findByEmail(message.getReceiver()).orElseThrow(()-> {throw new UserNotFoundException("Not found");});
-        MailBoxes mailBoxes = mailBoxesRepository.findById(user.getEmail()).orElseThrow(()-> {
+        User receiver =  userRepository.findByEmail(message.getReceiver()).orElseThrow(()-> {throw new UserNotFoundException("Not found");});
+        User sender =  userRepository.findByEmail(message.getSender()).orElseThrow(()-> {throw new UserNotFoundException("Not found");});
+
+        MailBoxes receiversMailBoxes = mailBoxesRepository.findById(receiver.getEmail()).orElseThrow(()-> {
             throw new UserNotFoundException("Not found");
         });
-        List<MailBox> mailBox= mailBoxes.getMailboxes();
+        List<MailBox> mailBox= receiversMailBoxes.getMailboxes();
         Optional<MailBox> inboxes = mailBox.stream().filter(mail-> mail.getType() == MailBoxType.INBOX).findFirst();
+        log.info("Here===>{}", inboxes.get().getMessages());
         inboxes.ifPresent(box -> box.getMessages().forEach((inbox) -> {
             if (inbox.getMsgId().equals(messageId)) {
                 inbox.setRead(true);
             }
         }));
-        mailBoxesRepository.save(mailBoxes);
-        message.setRead(true);
-        user.getNotificationList()
-//                        .filter((notification)->{
-//                            return !notification.getMessage().equals(message.getMsgBody());
-//                        }).collect(Collectors.toList());
-        .forEach((notification ->{
-            if (notification.isRead()){
-                user.getNotificationList().remove(notification);
+
+
+        MailBoxes sendersMailBoxes = mailBoxesRepository.findById(sender.getEmail()).orElseThrow(()-> {
+            throw new UserNotFoundException("Not found");
+        });
+        List<MailBox> mailboxOfSender= sendersMailBoxes.getMailboxes();
+        Optional<MailBox> outboxes = mailboxOfSender.stream().filter(mail-> mail.getType() == MailBoxType.SENT).findFirst();
+        log.info("Here===>{}", outboxes.get().getMessages());
+
+        outboxes.ifPresent(box -> box.getMessages().forEach((outbox) -> {
+            log.info("getttetet");
+            if (outbox.getMsgId().equals(messageId)) {
+                log.info("I am in outboxoooooo===>>>>>>");
+                outbox.setRead(true);
+
+                System.out.println(outbox.isRead());
             }
-            notificationRepository.save(notification);
         }));
-        userRepository.save(user);
+
+//        receiversMailBoxes.getMailboxes().get(0).getMessages().forEach(message1 -> {
+//            System.out.println(receiversMailBoxes.getMailboxes().get(0));
+//            if (message1.getMsgId().equals(messageId)) message1.setRead(true);
+//        });
+
+
+        mailBoxesRepository.save(receiversMailBoxes);
+        message.setRead(true);
+        messageRepository.save(message);
+        receiver.getNotificationList()
+                .removeIf(notification -> notification.getMessage().equals(message.getMsgBody()));
+        userRepository.save(receiver);
     }
 
     private void addMessageToSendersOutbox(CreateMessageDTO createMessageDTO, Message message) {
         MailBoxes senderMailBox = mailBoxesRepository.findById(createMessageDTO.getSender()).orElseThrow(() -> {
-            Notifications notifications = new Notifications(createMessageDTO.getSender(), "Incoming message from "+ createMessageDTO.getSender(), createMessageDTO.getMsgBody());
-
+//            Notifications notifications = new Notifications(createMessageDTO.getSender(), "Incoming message from "+ createMessageDTO.getSender(), createMessageDTO.getMsgBody());
             throw new UserNotFoundException("not found");
         });
         Notifications notifications = new Notifications(createMessageDTO.getSender(), "Incoming message from "+ createMessageDTO.getSender(), createMessageDTO.getMsgBody());
@@ -98,7 +116,7 @@ public class MessageServiceImpl implements MessageService{
     }
 
     private void addMessageToReceiversInbox(CreateMessageDTO createMessageDTO, Message message) {
-        MailBoxes receiverMailBoxes = mailBoxesRepository.findById(createMessageDTO.getReceiver()).orElseThrow(()-> {throw new UserNotFoundException("not found");});
+        MailBoxes receiverMailBoxes = mailBoxesRepository.findById(createMessageDTO.getReceiver()).orElseThrow(()->new UserNotFoundException("not found"));
         receiverMailBoxes.getMailboxes().forEach((mailBox)->{
             if (mailBox.getType().equals(MailBoxType.INBOX)){
                 mailBox.getMessages().add(message);
@@ -109,10 +127,12 @@ public class MessageServiceImpl implements MessageService{
 
     private void addNotification(CreateMessageDTO createMessageDTO) {
         Notifications notifications = new Notifications(createMessageDTO.getSender(), "Incoming message from "+ createMessageDTO.getSender(), createMessageDTO.getMsgBody());
+        log.info("email in msg service->{}", createMessageDTO.getReceiver());
         User user = userRepository.findByEmail(createMessageDTO.getReceiver()).orElseThrow(()-> {
             throw new UserNotFoundException("Not found");
         });
         user.getNotificationList().add(notifications);
+        notificationRepository.save(notifications);
         userRepository.save(user);
     }
 

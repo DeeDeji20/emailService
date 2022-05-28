@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 @Slf4j
 @Service
@@ -30,6 +31,7 @@ public class MailBoxServiceImpl implements MailBoxesService {
     @Override
     public MailBoxes createMailBoxes(String email) {
         MailBoxes mailBoxes = new MailBoxes();
+        mailBoxes.setMailboxes(new ArrayList<>());
         mailBoxes.setEmail(email);
 
         MailBox inbox = new MailBox();
@@ -39,12 +41,10 @@ public class MailBoxServiceImpl implements MailBoxesService {
         MailBox outbox = new MailBox();
         outbox.setType(MailBoxType.SENT);
         mailBoxes.getMailboxes().add(outbox);
-
         mailBoxesRepository.save(mailBoxes);
         CreateMessageDTO createMessageDTO =new CreateMessageDTO("mailSender", email,"Welcome to mail service");
         log.info("---> receivers email {}",email);
         messageService.sendMessage(createMessageDTO);
-
         return mailBoxes;
     }
 
