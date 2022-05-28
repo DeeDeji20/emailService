@@ -56,47 +56,45 @@ public class MessageServiceImpl implements MessageService{
         User receiver =  userRepository.findByEmail(message.getReceiver()).orElseThrow(()-> {throw new UserNotFoundException("Not found");});
         User sender =  userRepository.findByEmail(message.getSender()).orElseThrow(()-> {throw new UserNotFoundException("Not found");});
 
-        MailBoxes receiversMailBoxes = mailBoxesRepository.findById(receiver.getEmail()).orElseThrow(()-> {
-            throw new UserNotFoundException("Not found");
-        });
-        List<MailBox> mailBox= receiversMailBoxes.getMailboxes();
-        Optional<MailBox> inboxes = mailBox.stream().filter(mail-> mail.getType() == MailBoxType.INBOX).findFirst();
-        log.info("Here===>{}", inboxes.get().getMessages());
-        inboxes.ifPresent(box -> box.getMessages().forEach((inbox) -> {
-            if (inbox.getMsgId().equals(messageId)) {
-                inbox.setRead(true);
-            }
-        }));
+        receiversMailIsRead(messageId, receiver);
 
+        sendersMailIsRead(messageId, sender);
 
-        MailBoxes sendersMailBoxes = mailBoxesRepository.findById(sender.getEmail()).orElseThrow(()-> {
-            throw new UserNotFoundException("Not found");
-        });
-        List<MailBox> mailboxOfSender= sendersMailBoxes.getMailboxes();
-        Optional<MailBox> outboxes = mailboxOfSender.stream().filter(mail-> mail.getType() == MailBoxType.SENT).findFirst();
-        log.info("Here===>{}", outboxes.get().getMessages());
+        messageIsRead(message);
+        removeNotification(message, receiver);
 
-        outboxes.ifPresent(box -> box.getMessages().forEach((outbox) -> {
-            log.info("getttetet");
-            if (outbox.getMsgId().equals(messageId)) {
-                log.info("I am in outboxoooooo===>>>>>>");
-                outbox.setRead(true);
+    }
 
-                System.out.println(outbox.isRead());
-            }
-        }));
-
-//        receiversMailBoxes.getMailboxes().get(0).getMessages().forEach(message1 -> {
-//            System.out.println(receiversMailBoxes.getMailboxes().get(0));
-//            if (message1.getMsgId().equals(messageId)) message1.setRead(true);
-//        });
-
-
-        mailBoxesRepository.save(receiversMailBoxes);
-        message.setRead(true);
-        messageRepository.save(message);
+    private void removeNotification(Message message, User receiver) {
         receiver.getNotificationList()
                 .removeIf(notification -> notification.getMessage().equals(message.getMsgBody()));
+    }
+
+    private void messageIsRead(Message message) {
+        message.setRead(true);
+        messageRepository.save(message);
+    }
+
+    private void sendersMailIsRead(String messageId, User sender) {
+        MailBoxes sendersMailBoxes = mailBoxesRepository.findById(sender.getEmail()).orElseThrow(()-> {throw new UserNotFoundException("Not found");});
+        List<MailBox> mailboxOfSender= sendersMailBoxes.getMailboxes();
+        Optional<MailBox> outboxes = mailboxOfSender.stream().filter(mail-> mail.getType() == MailBoxType.SENT).findFirst();
+        log.info("Here===>{}", outboxes.get().getMessages().toString());
+        outboxes.ifPresent(box -> box.getMessages().forEach((outbox) -> {
+            if (outbox.getMsgId().equals(messageId)) outbox.setRead(true);
+        }));
+        mailBoxesRepository.save(sendersMailBoxes);
+        userRepository.save(sender);
+    }
+
+    private void receiversMailIsRead(String messageId, User receiver) {
+        MailBoxes receiversMailBoxes = mailBoxesRepository.findById(receiver.getEmail()).orElseThrow(()-> {throw new UserNotFoundException("Not found");});
+        List<MailBox> mailBox= receiversMailBoxes.getMailboxes();
+        Optional<MailBox> inboxes = mailBox.stream().filter(mail-> mail.getType() == MailBoxType.INBOX).findFirst();
+        inboxes.ifPresent(box -> box.getMessages().forEach((inbox) -> {
+            if (inbox.getMsgId().equals(messageId)) inbox.setRead(true);
+        }));
+        mailBoxesRepository.save(receiversMailBoxes);
         userRepository.save(receiver);
     }
 
