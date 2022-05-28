@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -56,18 +55,39 @@ public class MessageServiceImpl implements MessageService{
         User receiver =  userRepository.findByEmail(message.getReceiver()).orElseThrow(()-> {throw new UserNotFoundException("Not found");});
         User sender =  userRepository.findByEmail(message.getSender()).orElseThrow(()-> {throw new UserNotFoundException("Not found");});
 
+        removeNotification(message, receiver);
         receiversMailIsRead(messageId, receiver);
 
         sendersMailIsRead(messageId, sender);
 
         messageIsRead(message);
-        removeNotification(message, receiver);
+//        receiver.getNotificationList().forEach(notifications -> {
+//            if (notifications.getMessage().equals(message.getMsgBody())) {
+//                Notifications notification = notificationRepository.findNotificationsByMessage(message.getMsgBody()).orElseThrow(()-> new MessageNotAvailable("Not available"));
+//                notification.setRead(true);
+//                log.info("notification ===> {}", notification.isRead());
+//                notificationRepository.save(notification);
+//            }
+//        });
 
+    }
+
+    @Override
+    public List<Message> findMessage(String email, String msgBody) {
+//        User user = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("Not found"));
+//        String[] splitText = msgBody.split(" ");
+//        List<Message> message = messageRepository.findMessageByReceiver(email);
+//        message.stream().filter((mess)->{
+//            mess.getMsgBody().
+//        })
+        return null;
     }
 
     private void removeNotification(Message message, User receiver) {
         receiver.getNotificationList()
                 .removeIf(notification -> notification.getMessage().equals(message.getMsgBody()));
+
+
     }
 
     private void messageIsRead(Message message) {
