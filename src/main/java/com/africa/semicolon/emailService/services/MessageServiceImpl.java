@@ -72,6 +72,12 @@ public class MessageServiceImpl implements MessageService{
         return messageRepository.findById(id).orElseThrow(()-> {throw new MessageNotAvailable("Mesaage not found");});
     }
 
+    @Override
+    public void deleteMessage(String id) {
+        Message  messageToBeDeleted = messageRepository.findById(id).orElseThrow(()-> {throw new MessageNotAvailable("Message not found");});
+        messageRepository.delete(messageToBeDeleted);
+    }
+
 
     private void removeNotification(Message message, User receiver) {
         receiver.getNotificationList()

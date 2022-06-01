@@ -7,4 +7,5 @@ public interface MessageService {
     String sendMessage(CreateMessageDTO message);
     void readMessage(String messageId);
     Message findMessage(String id);
+    void deleteMessage(String id);
 }
