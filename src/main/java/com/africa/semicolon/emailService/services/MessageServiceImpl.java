@@ -63,41 +63,15 @@ public class MessageServiceImpl implements MessageService{
         sendersMailIsRead(messageId, sender);
 
         messageIsRead(message);
-//        receiver.getNotificationList().forEach(notifications -> {
-//            if (notifications.getMessage().equals(message.getMsgBody())) {
-//                Notifications notification = notificationRepository.findNotificationsByMessage(message.getMsgBody()).orElseThrow(()-> new MessageNotAvailable("Not available"));
-//                notification.setRead(true);
-//                log.info("notification ===> {}", notification.isRead());
-//                notificationRepository.save(notification);
-//            }
-//        });
+
 
     }
 
     @Override
-    public List<Message> findMessage(String email, String msgBody) {
-        User user = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("Not found"));
-//        String[] splitText = msgBody.split(" ");
-//        List<Message> message = messageRepository.findMessageByReceiver(email);
-//        message.stream().filter((mess)->{
-//            mess.getMsgBody().
-//        })
-        List<Message> foundMessages = new ArrayList<>();
-//        List<Message>messages= messageRepository.findMessageByReceiver(email);
-//        messages.forEach(message -> {
-//            if (Objects.equals(message.getMsgBody(), msgBody)){
-//                foundMessages.add(message);
-//            }
-//        });
-        Optional<MailBoxes> mailBoxes = mailBoxesRepository.findById(email);
-        List<MailBox>mailBox= mailBoxes.get().getMailboxes();
-        mailBox.forEach(mailBox1 -> {
-            if (mailBox1.getType().equals(MailBoxType.INBOX)){
-
-            }
-        });
-        return foundMessages;
+    public Message findMessage(String id) {
+        return messageRepository.findById(id).orElseThrow(()-> {throw new MessageNotAvailable("Mesaage not found");});
     }
+
 
     private void removeNotification(Message message, User receiver) {
         receiver.getNotificationList()
