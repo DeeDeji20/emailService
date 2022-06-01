@@ -1,5 +1,6 @@
 package com.africa.semicolon.emailService.services;
 
+import com.africa.semicolon.emailService.model.MailBoxes;
 import com.africa.semicolon.emailService.model.User;
 import com.africa.semicolon.emailService.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,6 +25,10 @@ public class UserServiceMockTest {
     UserRepository userRepository;
 
     @Mock
+    MailBoxesService mailBoxesService;
+
+
+    @Mock
     UserService userService;
 
     @Captor
@@ -38,6 +43,7 @@ public class UserServiceMockTest {
     void testThatAUserCanBeCreated(){
         when(userRepository.findByEmail(anyString())).thenReturn(Optional.empty());
         when(userRepository.save(any(User.class))).thenReturn(new User());
+        when(mailBoxesService.createMailBoxes(anyString())).thenReturn(new MailBoxes());
         userService.createAccount("testemai@gmail.com", "12345");
         verify(userRepository,times(1)).findByEmail(anyString());
         verify(userRepository,times(1)).save(userArgumentCaptor.capture());

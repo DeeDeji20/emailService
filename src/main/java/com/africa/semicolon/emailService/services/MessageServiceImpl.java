@@ -12,7 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -74,13 +76,27 @@ public class MessageServiceImpl implements MessageService{
 
     @Override
     public List<Message> findMessage(String email, String msgBody) {
-//        User user = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("Not found"));
+        User user = userRepository.findByEmail(email).orElseThrow(()-> new UserNotFoundException("Not found"));
 //        String[] splitText = msgBody.split(" ");
 //        List<Message> message = messageRepository.findMessageByReceiver(email);
 //        message.stream().filter((mess)->{
 //            mess.getMsgBody().
 //        })
-        return null;
+        List<Message> foundMessages = new ArrayList<>();
+//        List<Message>messages= messageRepository.findMessageByReceiver(email);
+//        messages.forEach(message -> {
+//            if (Objects.equals(message.getMsgBody(), msgBody)){
+//                foundMessages.add(message);
+//            }
+//        });
+        Optional<MailBoxes> mailBoxes = mailBoxesRepository.findById(email);
+        List<MailBox>mailBox= mailBoxes.get().getMailboxes();
+        mailBox.forEach(mailBox1 -> {
+            if (mailBox1.getType().equals(MailBoxType.INBOX)){
+
+            }
+        });
+        return foundMessages;
     }
 
     private void removeNotification(Message message, User receiver) {
