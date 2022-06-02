@@ -49,12 +49,6 @@ public class MailBoxServiceImpl implements MailBoxesService {
     }
 
 
-//
-//    @Override
-//    public void addMessageToMailBox(CreateMessageDTO createMessageDTO) {
-//        messageService.sendMessage(createMessageDTO);
-//    }
-
     @Override
     public List<MailBox> viewAllInboxes(String email) {
         MailBoxes mailBoxes = mailBoxesRepository.findById(email).orElseThrow(()-> {throw new UserNotFoundException(("Not found"));});
