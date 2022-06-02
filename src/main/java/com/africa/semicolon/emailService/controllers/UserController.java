@@ -1,10 +1,7 @@
 package com.africa.semicolon.emailService.controllers;
 
-import com.africa.semicolon.emailService.dtos.CreateMessageDTO;
 import com.africa.semicolon.emailService.dtos.LoginRequest;
 import com.africa.semicolon.emailService.dtos.UserDto;
-import com.africa.semicolon.emailService.model.Message;
-import com.africa.semicolon.emailService.services.MessageService;
 import com.africa.semicolon.emailService.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
