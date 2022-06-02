@@ -19,7 +19,4 @@ public class Message {
     private String msgBody;
     private boolean isRead;
 
-//    public Message() {
-//        localDateTime = LocalDateTime.now();
-//    }
 }
