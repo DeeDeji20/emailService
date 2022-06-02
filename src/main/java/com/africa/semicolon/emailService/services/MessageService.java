@@ -8,5 +8,5 @@ public interface MessageService {
     void readMessage(String messageId);
     Message findMessage(String id);
     void deleteMessage(String id);
-    String forwardMessage(String id, String messageReceiver);
+    String forwardMessage(String id, String messageReceiver, String messageSender);
 }

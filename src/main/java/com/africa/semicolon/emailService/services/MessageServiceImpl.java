@@ -1,7 +1,6 @@
 package com.africa.semicolon.emailService.services;
 
 import com.africa.semicolon.emailService.dtos.CreateMessageDTO;
-import com.africa.semicolon.emailService.dtos.UserDto;
 import com.africa.semicolon.emailService.exception.MessageNotAvailable;
 import com.africa.semicolon.emailService.exception.UserNotFoundException;
 import com.africa.semicolon.emailService.model.*;
@@ -10,6 +9,7 @@ import com.africa.semicolon.emailService.repository.MessageRepository;
 import com.africa.semicolon.emailService.repository.NotificationRepository;
 import com.africa.semicolon.emailService.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +33,9 @@ public class MessageServiceImpl implements MessageService{
 
     @Autowired
     NotificationRepository notificationRepository;
+
+    private ModelMapper mapper =new ModelMapper();
+
 
     @Override
     public String sendMessage(CreateMessageDTO createMessageDTO) {
@@ -81,11 +84,13 @@ public class MessageServiceImpl implements MessageService{
     }
 
     @Override
-    public String forwardMessage(String id, String messageReceiver) {
+    public String forwardMessage(String id, String messageReceiver, String messageSender) {
         Message  messageToBeForwarded = messageRepository.findById(id).orElseThrow(()-> {throw new MessageNotAvailable("Message not found");});
-        User user = userRepository.findByEmail(messageReceiver).orElseThrow(()-> {throw new UserNotFoundException("Not found");});
-//         mapper.map(savedUser, UserDto.class);
-        messageService.sendMessage(messageToBeForwarded)
+        User receiver = userRepository.findByEmail(messageReceiver).orElseThrow(()-> {throw new UserNotFoundException("Not found");});
+        messageToBeForwarded.setReceiver(receiver.getEmail());
+        CreateMessageDTO createMessageDTO = mapper.map(messageToBeForwarded, CreateMessageDTO.class);
+        messageService.sendMessage(createMessageDTO);
+        return "Message has been forwarded to " + messageReceiver;
     }
 
 
