@@ -1,6 +1,7 @@
 package com.africa.semicolon.emailService.services;
 
 import com.africa.semicolon.emailService.dtos.CreateMessageDTO;
+import com.africa.semicolon.emailService.dtos.UserDto;
 import com.africa.semicolon.emailService.exception.MessageNotAvailable;
 import com.africa.semicolon.emailService.exception.UserNotFoundException;
 import com.africa.semicolon.emailService.model.*;
@@ -12,9 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -25,6 +24,9 @@ public class MessageServiceImpl implements MessageService{
 
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    MessageServiceImpl messageService;
 
     @Autowired
     MailBoxesRepository mailBoxesRepository;
@@ -76,6 +78,14 @@ public class MessageServiceImpl implements MessageService{
     public void deleteMessage(String id) {
         Message  messageToBeDeleted = messageRepository.findById(id).orElseThrow(()-> {throw new MessageNotAvailable("Message not found");});
         messageRepository.delete(messageToBeDeleted);
+    }
+
+    @Override
+    public String forwardMessage(String id, String messageReceiver) {
+        Message  messageToBeForwarded = messageRepository.findById(id).orElseThrow(()-> {throw new MessageNotAvailable("Message not found");});
+        User user = userRepository.findByEmail(messageReceiver).orElseThrow(()-> {throw new UserNotFoundException("Not found");});
+//         mapper.map(savedUser, UserDto.class);
+        messageService.sendMessage(messageToBeForwarded)
     }
 
 
