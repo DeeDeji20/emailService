@@ -1,6 +1,7 @@
 package com.africa.semicolon.emailService.controllers;
 
 import com.africa.semicolon.emailService.dtos.CreateMessageDTO;
+import com.africa.semicolon.emailService.dtos.LoginRequest;
 import com.africa.semicolon.emailService.dtos.UserDto;
 import com.africa.semicolon.emailService.model.Message;
 import com.africa.semicolon.emailService.services.MessageService;
@@ -27,6 +28,11 @@ public class UserController {
         log.info("email->{},password->{}", email, password);
         UserDto userDto = userService.createAccount(email, password);
         return new ResponseEntity<>(userDto, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public String forwardMessage(@RequestBody LoginRequest loginRequest){
+        return userService.login(loginRequest);
     }
 
 }

@@ -25,8 +25,7 @@ public class MessageServiceImpl implements MessageService{
     @Autowired
     UserRepository userRepository;
 
-    @Autowired
-    MessageServiceImpl messageService;
+
 
     @Autowired
     MailBoxesRepository mailBoxesRepository;
@@ -87,9 +86,11 @@ public class MessageServiceImpl implements MessageService{
     public String forwardMessage(String id, String messageReceiver, String messageSender) {
         Message  messageToBeForwarded = messageRepository.findById(id).orElseThrow(()-> {throw new MessageNotAvailable("Message not found");});
         User receiver = userRepository.findByEmail(messageReceiver).orElseThrow(()-> {throw new UserNotFoundException("Not found");});
+        User sender = userRepository.findByEmail(messageSender).orElseThrow(()-> {throw new UserNotFoundException("Not found");});
         messageToBeForwarded.setReceiver(receiver.getEmail());
+        messageToBeForwarded.setSender(sender.getEmail());
         CreateMessageDTO createMessageDTO = mapper.map(messageToBeForwarded, CreateMessageDTO.class);
-        messageService.sendMessage(createMessageDTO);
+        sendMessage(createMessageDTO);
         return "Message has been forwarded to " + messageReceiver;
     }
 
