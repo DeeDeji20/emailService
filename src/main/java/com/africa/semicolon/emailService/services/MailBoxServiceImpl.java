@@ -57,7 +57,7 @@ public class MailBoxServiceImpl implements MailBoxesService {
     }
 
     @Override
-    public List<MailBox> viewallSent(String email) {
+    public List<MailBox> viewAllSent(String email) {
         MailBoxes mailBoxes = mailBoxesRepository.findById(email).orElseThrow(()-> {throw new UserNotFoundException(("Not found"));});
         List<MailBox> allMailBox =mailBoxes.getMailboxes();
         return allMailBox.stream().filter(eachMailBox -> eachMailBox.getType().equals(MailBoxType.SENT)).toList();
